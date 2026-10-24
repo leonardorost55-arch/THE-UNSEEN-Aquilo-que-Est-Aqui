@@ -3,12 +3,13 @@
   "id": "the_unseen",
   "version": "${version}",
   "name": "THE UNSEEN: Aquilo que Está Aqui",
-  "description": "Terror psicológico original: sinais raros, sons estranhos e presenças que observam.",
+  "description": "Terror psicológico original com eventos raros e três entidades anômalas.",
   "authors": ["THE UNSEEN Project"],
   "license": "MIT",
   "environment": "*",
   "entrypoints": {
-    "main": ["dev.unseen.TheUnseenMod"]
+    "main": ["dev.unseen.TheUnseenMod"],
+    "client": ["dev.unseen.TheUnseenClient"]
   },
   "depends": {
     "fabricloader": ">=0.16.5",
