@@ -107,7 +107,7 @@ public final class TheUnseenMod implements ModInitializer {
     private static void leaveAVisualSign(ServerPlayerEntity player) {
         BlockPos pos = player.getBlockPos().offset(player.getHorizontalFacing(), 6);
         if (player.getWorld().getBlockState(pos).isAir()) {
-            player.getWorld().spawnParticles(ParticleTypes.ASH,
+            player.getServerWorld().spawnParticles(ParticleTypes.ASH,
                     pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
                     5, 0.2, 0.3, 0.2, 0.003);
         }
