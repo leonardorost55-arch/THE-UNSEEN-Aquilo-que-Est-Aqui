@@ -3,7 +3,11 @@ name: Build mod
 on:
   workflow_dispatch:
   push:
-    branches: [ main, master, work/complete-mod ]
+    branches: [ main, master ]
+
+concurrency:
+  group: the-unseen-build-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -22,7 +26,7 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
       - name: Build with Gradle
-        run: gradle build --no-daemon
+        run: gradle build --no-daemon --stacktrace
       - name: Upload mod JAR
         uses: actions/upload-artifact@v4
         with:
