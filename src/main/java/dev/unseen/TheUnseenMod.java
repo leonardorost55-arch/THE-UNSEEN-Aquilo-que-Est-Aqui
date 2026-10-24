@@ -1,9 +1,12 @@
 package dev.unseen;
 
+import dev.unseen.entity.UnseenEntities;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.particle.ParticleTypes;
@@ -22,6 +25,7 @@ public final class TheUnseenMod implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        UnseenEntities.registerAttributes();
         System.out.println("[THE UNSEEN] The world is listening.");
         ServerTickEvents.END_SERVER_TICK.register(TheUnseenMod::tick);
     }
@@ -53,7 +57,30 @@ public final class TheUnseenMod implements ModInitializer {
             } else if (roll == 11) {
                 leaveAVisualSign(player);
                 state.cooldown = 120 + ThreadLocalRandom.current().nextInt(120);
+            } else if (roll == 12 && world instanceof ServerWorld serverWorld) {
+                spawnRareEncounter(player, serverWorld);
+                state.cooldown = 180 + ThreadLocalRandom.current().nextInt(180);
             }
+        }
+    }
+
+    private static void spawnRareEncounter(ServerPlayerEntity player, ServerWorld world) {
+        // Spawn far enough away to create a sighting, not an unavoidable instant hit.
+        double angle = ThreadLocalRandom.current().nextDouble(Math.PI * 2);
+        int distance = 12 + ThreadLocalRandom.current().nextInt(9);
+        BlockPos pos = player.getBlockPos().add(
+                (int) Math.round(Math.cos(angle) * distance), 0,
+                (int) Math.round(Math.sin(angle) * distance));
+        pos = world.getTopPosition(net.minecraft.world.Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos);
+
+        if (!world.getBlockState(pos).isAir() || !world.getBlockState(pos.up()).isAir()) return;
+        int type = ThreadLocalRandom.current().nextInt(3);
+        if (type == 0) {
+            UnseenEntities.OBSERVER.spawn(world, pos, SpawnReason.EVENT);
+        } else if (type == 1) {
+            UnseenEntities.RAISED_ONE.spawn(world, pos, SpawnReason.EVENT);
+        } else {
+            UnseenEntities.MUFFIN.spawn(world, pos, SpawnReason.EVENT);
         }
     }
 
